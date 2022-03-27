@@ -11,7 +11,7 @@ soup = BeautifulSoup(response.text, "html.parser")
 elems = soup.find_all('ul', attrs={"class": "liveEventList"})
 events = elems[0].find_all("li")
 
-#全て合わさったリスト
+#全て合わさったリストの定義
 event_list = []
 
 #eventリストの作成
@@ -54,33 +54,3 @@ print(event_url[0]).attrs['href']
  """
 
 
-
-""" 
-event_titles = soup.find_all('p', attrs={"class": "liveEventListTitle"})
-event_dates = soup.find_all('div', attrs={"class": "itemInfoColumnData"})
-event_title = event_titles[0]
-event_date = event_dates[0]
-
-print(event_title)
-print(event_date)
- """
-
-"""
-result = []
-
-for news in soup.find_all(class_="liveEventList"):
-    result.append([
-        news.text,
-        news.get('href')
-    ])
-
-print(result)
-"""
-
-
-""" with open("site_source.csv", "w", encoding="Shift_JIS") as file:
-    writer = csv.writer(file, lineterminator="\n")
-
-        writer.writerows(row)
-
-print(soup) """
