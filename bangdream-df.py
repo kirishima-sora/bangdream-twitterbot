@@ -24,39 +24,38 @@ for drop_num in range(shift_num):
 df_old_comv = df_old_comv.reset_index(drop=True)
 df_new_comv = df_new_comv.reset_index(drop=True)
 
-#新情報以外の差分の確認
-df_comp = df_new_comv.compare(df_old_comv)
+#比較結果リストの作成（true,false埋め）
+df_comp = (df_old_comv==df_new_comv)
 print(df_comp)
 
-diff_col = df_comp.columns.droplevel(1).unique()
-print(diff_col)
-
-
-
-
-""" 
-df_comp = df_old.compare(df_new)
-print(df_comp)
-print(df_new.iat[0,2])
-"""
-
-""" 
-df1 = pd.DataFrame(
-    dict(
-        a=[2, 4, 6],
-        b=[1, 2, 3],
-        c=[3, 6, 9],
-    )
-)
-df2 = pd.DataFrame(
-    dict(
-        a=[2, 40, 6],
-        b=[10, 2, 3],
-        c=[3, 6, 9],
-    )
-)
-
-df_comp = df1.compare(df2)
+#更新カテゴリ入れ
+for row in range(10-shift_num):
+    category = "更新なし"
+    if ((df_comp.iat[row, 2] == False) and (df_comp.iat[row, 3] == False)) or (df_comp.iat[row, 0] == False) or (df_comp.iat[row, 4] == False):
+        category = "情報更新"
+    elif df_comp.iat[row, 2] == False:
+        category = "日程情報更新"
+    elif df_comp.iat[row, 3] == False:
+        category = "場所情報更新"
+    df_comp.iat[row, 5] = category
 print(df_comp)
 
- """
+#ツイート内容の配列を作成
+tweet_array = []
+
+#新情報のツイート内容作成
+for row in range(shift_num):
+    text = "【新情報】\n{title}\n開催日時:{date}\n場所:{place}\n{URL}"
+    tweet_array.append(text.format(title=df_new.iat[row,0], date=df_new.iat[row,2], place=df_new.iat[row,3], URL=df_new.iat[row,1]))
+
+#情報更新のツイート内容作成
+for row in range(10-shift_num):
+    if df_comp.iat[row,5] != "更新なし":
+        text = "【{category}】\n{title}\n開催日時:{date}\n場所:{place}\n{URL}"
+        tweet_array.append(text.format(category=df_comp.iat[row,5], title=df_new_comv.iat[row,0], date=df_new_comv.iat[row,2], place=df_new_comv.iat[row,3], URL=df_new_comv.iat[row,1]))
+
+for tweet in enumerate(tweet_array):
+    print(tweet[1])
+
+
+
