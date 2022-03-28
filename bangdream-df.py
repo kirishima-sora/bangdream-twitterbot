@@ -54,6 +54,7 @@ for row in range(10-shift_num):
         text = "【{category}】\n{title}\n開催日時:{date}\n場所:{place}\n{URL}"
         tweet_array.append(text.format(category=df_comp.iat[row,5], title=df_new_comv.iat[row,0], date=df_new_comv.iat[row,2], place=df_new_comv.iat[row,3], URL=df_new_comv.iat[row,1]))
 
+#(テスト用)ツイート内容の確認
 for tweet in enumerate(tweet_array):
     print(tweet[1])
 
