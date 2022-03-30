@@ -38,7 +38,6 @@ tweet_area.send_keys(text)
 time.sleep(3)
 driver.find_element_by_xpath("//*[text()=\"ツイートする\"]").click()
 
-
 #終了処理
 time.sleep(5)
 driver.quit()
