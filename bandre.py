@@ -108,7 +108,9 @@ if (shift_num != 0) or (df_old_comv.equals(df_new_comv) == False):
     url = "https://twitter.com/i/flow/login"
 
     #twitterのログイン画面へのアクセス
-    driver = webdriver.Chrome()
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    driver = webdriver.Chrome(options=options)
     driver.get(url)
     #ページ表示待ち
     time.sleep(5)
@@ -159,10 +161,10 @@ if (shift_num != 0) or (df_old_comv.equals(df_new_comv) == False):
     old_path = "bandre-event-old-{day}-{hour}.csv"
     old_path_for = old_path.format(day=today, hour=hour_zero)
 
-    #1つ前の古いファイルのリネーム
-    os.rename("bandre-event-old.csv", old_path_for)
     #最新ファイルを1つ前の古いファイルにリネーム
     os.rename("bandre-event.csv", "bandre-event-old.csv")
+    #1つ前の古いファイルのリネーム
+    os.rename("bandre-event-old.csv", old_path_for)
 
 #更新がなければ自動ツイートとcsvリネームは省略する
 else:
