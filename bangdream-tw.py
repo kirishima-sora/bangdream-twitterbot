@@ -1,3 +1,4 @@
+from cgitb import text
 from selenium import webdriver
 import time
 
@@ -5,6 +6,7 @@ username = "Q6GUVp50d67dlx0"
 password = "5k8r5hdr"
 
 url = "https://twitter.com/i/flow/login"
+text = "テストテキストです"
 
 #twitterログイン画面へのアクセス
 driver = webdriver.Chrome()
@@ -26,9 +28,20 @@ password_form.send_keys(password)
 time.sleep(3)
 driver.find_element_by_xpath("//*[text()=\"ログイン\"]").click()
 
+#ページ切り替わり待ち
+time.sleep(5)
+
+#ツイート入力
+tweet_area = driver.find_element_by_class_name("public-DraftEditor-content")
+tweet_area.send_keys(text)
+#ツイートボタンのアクティブ待ち
+time.sleep(3)
+driver.find_element_by_xpath("//*[text()=\"ツイートする\"]").click()
 
 
-
+#終了処理
 time.sleep(5)
 driver.quit()
+
+
 
