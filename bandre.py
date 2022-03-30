@@ -7,6 +7,8 @@ import pandas as pd
 from cgitb import text
 from selenium import webdriver
 import time
+import os
+import datetime
 
 #スクレイピング先ページの取得
 url_sc = "https://bang-dream.com/events"
@@ -95,56 +97,73 @@ for row in range(10-shift_num):
         text = "【{info}】\n{title}\n開催日時:{date}\n場所:{place}\n{URL}"
         tweet_array.append(text.format(info=df_comp.iat[row,5], title=df_new_comv.iat[row,0], date=df_new_comv.iat[row,2], place=df_new_comv.iat[row,3], URL=df_new_comv.iat[row,1]))
 
-""" 
-#(テスト用)ツイート内容の確認
-for tweet in enumerate(tweet_array):
-    print(tweet[1])
-    print()
- """
 
-#twitterログイン情報
-username = "Q6GUVp50d67dlx0"
-password = "5k8r5hdr"
+#更新があれば自動ツイートとcsvリネーム処理を実行
+if (shift_num != 0) or (df_old_comv.equals(df_new_comv) == False):
+    #twitterログイン情報
+    username = "Q6GUVp50d67dlx0"
+    password = "5k8r5hdr"
 
-#twitterのログインURL
-url = "https://twitter.com/i/flow/login"
+    #twitterのログインURL
+    url = "https://twitter.com/i/flow/login"
 
-#twitterのログイン画面へのアクセス
-driver = webdriver.Chrome()
-driver.get(url)
-#ページ表示待ち
-time.sleep(5)
+    #twitterのログイン画面へのアクセス
+    driver = webdriver.Chrome()
+    driver.get(url)
+    #ページ表示待ち
+    time.sleep(5)
 
-#username入力、次へボタン押下
-username_form = driver.find_element_by_name("text")
-username_form.send_keys(username)
-driver.find_element_by_xpath("//*[text()=\"次へ\"]").click()
-#ページ切り替わり待ち
-time.sleep(5)
+    #username入力、次へボタン押下
+    username_form = driver.find_element_by_name("text")
+    username_form.send_keys(username)
+    driver.find_element_by_xpath("//*[text()=\"次へ\"]").click()
+    #ページ切り替わり待ち
+    time.sleep(5)
 
-#password入力
-password_form = driver.find_element_by_name("password")
-password_form.send_keys(password)
-#ログインボタンのアクティブ待ち
-time.sleep(3)
-#ログインボタン押下
-driver.find_element_by_xpath("//*[text()=\"ログイン\"]").click()
-#ページ切り替わり待ち
-time.sleep(5)
-
-#情報のツイート
-for tweet in enumerate(tweet_array):
-    #ツイート入力
-    tweet_area = driver.find_element_by_class_name("public-DraftEditor-content")
-    tweet_area.send_keys(tweet[1])
-    #ツイートボタンのアクティブ待ち
+    #password入力
+    password_form = driver.find_element_by_name("password")
+    password_form.send_keys(password)
+    #ログインボタンのアクティブ待ち
     time.sleep(3)
-    driver.find_element_by_xpath("//*[text()=\"ツイートする\"]").click()
-    #ツイート反映待ち
-    time.sleep(15)
+    #ログインボタン押下
+    driver.find_element_by_xpath("//*[text()=\"ログイン\"]").click()
+    #ページ切り替わり待ち
+    time.sleep(5)
 
-#終了処理
-time.sleep(5)
-driver.quit()
+    #情報のツイート
+    for tweet in enumerate(tweet_array):
+        #ツイート入力
+        tweet_area = driver.find_element_by_class_name("public-DraftEditor-content")
+        tweet_area.send_keys(tweet[1])
+        #ツイートボタンのアクティブ待ち
+        time.sleep(3)
+        driver.find_element_by_xpath("//*[text()=\"ツイートする\"]").click()
+        #ツイート反映待ち
+        time.sleep(15)
+
+    #終了処理
+    time.sleep(5)
+    driver.quit()
 
 
+
+    #csv更新処理
+    #現在の日時と日付の文字列変換
+    dt_now = datetime.datetime.now()
+    d_today = datetime.date.today()
+    now_hour = str(dt_now.hour)
+    hour_zero = now_hour.zfill(2)
+    today = str(d_today)
+
+    #古いファイルの名前作成
+    old_path = "bandre-event-old-{day}-{hour}.csv"
+    old_path_for = old_path.format(day=today, hour=hour_zero)
+
+    #1つ前の古いファイルのリネーム
+    os.rename("bandre-event-old.csv", old_path_for)
+    #最新ファイルを1つ前の古いファイルにリネーム
+    os.rename("bandre-event.csv", "bandre-event-old.csv")
+
+#更新がなければ自動ツイートとcsvリネームは省略する
+else:
+    os.remove("bandre-event.csv")
