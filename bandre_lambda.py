@@ -9,6 +9,7 @@ from selenium import webdriver
 import time
 import os
 import datetime
+import boto3
 
 #スクレイピング先ページの取得
 url_sc = "https://bang-dream.com/events"
@@ -42,14 +43,23 @@ for event in enumerate(events):
             sys.exit(1)
     event_list.append([title, long_url_sc, date, place, overview, info])
 
+#S3バケット内でのファイル生成準備
+s3 = boto3.resource('s3')
+bucket_name = "bangdream-eventlist"
+bucket = s3.Bucket(bucket_name)
+s3_filename_new = 'bandre-event.csv'
+
 #CSV書き込み
-with open("bandre-event.csv", "w", encoding="Shift_JIS") as file:
+with open(s3_filename_new, "w", encoding="Shift_JIS") as file:
     writer = csv.writer(file, lineterminator="\n")
     writer.writerows(event_list)
 
-#csv読み込み
-df_old = pd.read_csv("bandre-event-old.csv", encoding="Shift_JIS")
-df_new = pd.read_csv("bandre-event.csv", encoding="Shift_JIS")
+#S3バケットへのファイルアップロード
+bucket.upload_file(s3_filename_new, s3_filename_new)
+
+#s3バケットからcsv読み込み
+df_old = pd.read_csv('s3://bangdream-eventlist/oldlist-csv/bandre-event-old.csv', encoding="Shift_JIS")
+df_new = pd.read_csv('s3://bangdream-eventlist/bandre-event.csv', encoding="Shift_JIS")
 
 #新情報の行数(shift_num)の確認
 for shift_num in range(10):
