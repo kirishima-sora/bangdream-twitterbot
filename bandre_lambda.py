@@ -6,13 +6,11 @@ import csv
 import urllib
 import pandas as pd
 from cgitb import text
-from selenium import webdriver
 import time
 import os
 import datetime
 import boto3
 import tweepy
-import pytz
 
 #lambdaで最初に実行される関数
 def lambda_handler(event, context):
