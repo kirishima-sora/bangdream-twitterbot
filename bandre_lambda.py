@@ -1,3 +1,4 @@
+from copy import copy
 from unicodedata import category
 import requests
 from bs4 import BeautifulSoup
@@ -10,6 +11,8 @@ import time
 import os
 import datetime
 import boto3
+import tweepy
+import pytz
 
 #スクレイピング先ページの取得
 url_sc = "https://bang-dream.com/events"
@@ -39,8 +42,6 @@ for event in enumerate(events):
             place = datas[i].get_text()
         elif column.get_text() == "概要":
             overview = datas[i].get_text()
-        else:
-            sys.exit(1)
     event_list.append([title, long_url_sc, date, place, overview, info])
 
 #S3バケット内でのファイル生成準備
@@ -110,54 +111,20 @@ for row in range(10-shift_num):
 
 #更新があれば自動ツイートとcsvリネーム処理を実行
 if (shift_num != 0) or (df_old_comv.equals(df_new_comv) == False):
-    #twitterログイン情報
-    username = "Q6GUVp50d67dlx0"
-    password = "5k8r5hdr"
+    consumer_key = os.environ['CONSUMER_KEY']
+    consumer_secret = os.environ['CONSUMER_KEY_SECRET']
+    access_token = os.environ['ACCESS_TOKEN_KEY']
+    access_token_secret = os.environ['ACCESS_TOKEN_KEY_SECRET']
 
-    #twitterのログインURL
-    url = "https://twitter.com/i/flow/login"
-
-    #twitterのログイン画面へのアクセス
-    options = webdriver.ChromeOptions()
-    options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    driver = webdriver.Chrome(options=options)
-    driver.get(url)
-    #ページ表示待ち
-    time.sleep(5)
-
-    #username入力、次へボタン押下
-    username_form = driver.find_element_by_name("text")
-    username_form.send_keys(username)
-    driver.find_element_by_xpath("//*[text()=\"次へ\"]").click()
-    #ページ切り替わり待ち
-    time.sleep(5)
-
-    #password入力
-    password_form = driver.find_element_by_name("password")
-    password_form.send_keys(password)
-    #ログインボタンのアクティブ待ち
-    time.sleep(3)
-    #ログインボタン押下
-    driver.find_element_by_xpath("//*[text()=\"ログイン\"]").click()
-    #ページ切り替わり待ち
-    time.sleep(5)
+    # Twitterオブジェクトの生成
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_token, access_token_secret)
+    api = tweepy.API(auth)
 
     #情報のツイート
     for tweet in enumerate(tweet_array):
-        #ツイート入力
-        tweet_area = driver.find_element_by_class_name("public-DraftEditor-content")
-        tweet_area.send_keys(tweet[1])
-        #ツイートボタンのアクティブ待ち
-        time.sleep(3)
-        driver.find_element_by_xpath("//*[text()=\"ツイートする\"]").click()
-        #ツイート反映待ち
-        time.sleep(15)
-
-    #終了処理
-    time.sleep(5)
-    driver.quit()
-
-
+        # ツイートを投稿
+        api.update_status(tweet[1])
 
     #csv更新処理
     #現在の日時と日付の文字列変換
@@ -168,14 +135,26 @@ if (shift_num != 0) or (df_old_comv.equals(df_new_comv) == False):
     today = str(d_today)
 
     #古いファイルの名前作成
-    old_path = "bandre-event-old-{day}-{hour}.csv"
-    old_path_for = old_path.format(day=today, hour=hour_zero)
+    old_csv = "bandre-event-old-{day}-{hour}.csv"
+    old_csv_form = old_csv.format(day=today, hour=hour_zero)
 
-    #最新ファイルを1つ前の古いファイルにリネーム
-    os.rename("bandre-event.csv", "bandre-event-old.csv")
-    #1つ前の古いファイルのリネーム
-    os.rename("bandre-event-old.csv", old_path_for)
+    #古いファイルを過去ファイルに移動
+    old_copy_from = bucket_name + '/oldlist-csv'
+    old_copy_to = bucket_name + '/oldlist-csv'
+    old_copy_from_path = os.path.join(old_copy_from, "bandre-event-old.csv")
+    old_copy_to_path = os.path.join(old_copy_to, old_csv_form)
+    s3.copy_object(Bucket=bucket_name, Key=old_copy_to_path, CopySource={'Bucket': bucket_name, 'Key': old_copy_from_path})
+    s3.delete_object(Bucket=bucket_name, Key=old_copy_from_path)
 
-#更新がなければ自動ツイートとcsvリネームは省略する
+    #最新ファイルを1つ前の古いファイルに移動
+    copy_from = bucket_name
+    copy_to = bucket_name + '/oldlist-csv'
+    copy_from_path = os.path.join(copy_from, s3_filename_new)
+    copy_to_path = os.path.join(copy_to, "bandre-event-old.csv")
+    s3.copy_object(Bucket=bucket_name, Key=copy_to_path, CopySource={'Bucket': bucket_name, 'Key': copy_from_path})
+    s3.delete_object(Bucket=bucket_name, Key=copy_from_path)
+
+#更新がなければ自動ツイートとcsvリネームは省略する(スクレイピングで作成したファイルは削除する)
 else:
-    os.remove("bandre-event.csv")
+    delete_object = os.path.join(bucket_name, s3_filename_new)
+    s3.delete_object(Bucket=bucket_name, Key=delete_object)
