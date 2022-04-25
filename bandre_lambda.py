@@ -11,6 +11,7 @@ import os
 import datetime
 import boto3
 import tweepy
+import io
 
 #lambdaで最初に実行される関数
 def lambda_handler(event, context):
@@ -49,8 +50,9 @@ def lambda_handler(event, context):
     bucket_name = "bangdream-eventlist"
     bucket = s3.Bucket(bucket_name)
     s3_filename_new = 'bandre-event.csv'
+    s3_filename_old = '/oldlist-csv/bandre-event-old.csv'
 
-    #実行時の一時ファイルパス
+    #lambda実行時の一時ファイルパス
     tmp_path = "/tmp/data.csv"
 
     #CSV書き込み
@@ -62,8 +64,11 @@ def lambda_handler(event, context):
     bucket.upload_file(tmp_path, s3_filename_new)
 
     #s3バケットからcsv読み込み
-    df_old = pd.read_csv('s3://bangdream-eventlist/oldlist-csv/bandre-event-old.csv', encoding="Shift_JIS")
-    df_new = pd.read_csv('s3://bangdream-eventlist/bandre-event.csv', encoding="Shift_JIS")
+    df_bucket = s3.Object(bucket_name, s3_filename_old)
+    body_in = df_bucket.get()['Body'].read().decode("Shift_JIS")
+    buffer_in = io.StringIO(body_in)
+    df_old = pd.read_csv(buffer_in, lineterminator='\n')
+    df_new = pd.read_csv(tmp_path, lineterminator='\n')
 
     #新情報の行数(shift_num)の確認
     for shift_num in range(10):
