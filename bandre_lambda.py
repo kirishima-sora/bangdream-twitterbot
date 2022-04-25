@@ -50,13 +50,16 @@ def lambda_handler(event, context):
     bucket = s3.Bucket(bucket_name)
     s3_filename_new = 'bandre-event.csv'
 
+    #実行時の一時ファイルパス
+    tmp_path = "/tmp/data.csv"
+
     #CSV書き込み
-    with open(s3_filename_new, "w", encoding="Shift_JIS") as file:
+    with open(tmp_path, "w", encoding="Shift_JIS") as file:
         writer = csv.writer(file, lineterminator="\n")
         writer.writerows(event_list)
 
     #S3バケットへのファイルアップロード
-    bucket.upload_file(s3_filename_new, s3_filename_new)
+    bucket.upload_file(tmp_path, s3_filename_new)
 
     #s3バケットからcsv読み込み
     df_old = pd.read_csv('s3://bangdream-eventlist/oldlist-csv/bandre-event-old.csv', encoding="Shift_JIS")
