@@ -64,7 +64,7 @@ def lambda_handler(event, context):
     bucket.upload_file(tmp_path, s3_filename_new)
 
     #s3バケットからcsv読み込み
-    df_bucket = s3.Object(bucket_name, s3_filename_old)
+    df_bucket = bucket.Object(s3_filename_old)
     body_in = df_bucket.get()['Body'].read().decode("Shift_JIS")
     buffer_in = io.StringIO(body_in)
     df_old = pd.read_csv(buffer_in, lineterminator='\n')
