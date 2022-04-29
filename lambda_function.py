@@ -63,6 +63,9 @@ def lambda_handler(event, context):
     #S3バケットへのファイルアップロード
     bucket.upload_file(tmp_path, s3_filename_new)
 
+    #tmpファイルの削除
+    os.remove(tmp_path)
+
     #s3バケットからcsv読み込み
     df_old_bucket = s3.Object(bucket_name, s3_filename_old)
     body_in = df_old_bucket.get()['Body'].read().decode("Shift_JIS")
@@ -134,9 +137,9 @@ def lambda_handler(event, context):
         api = tweepy.API(auth)
 
         #情報のツイート
-#        for tweet in enumerate(tweet_array):
+        for tweet in enumerate(tweet_array):
             # ツイートを投稿
-#            api.update_status(tweet[1])
+            api.update_status(tweet[1])
 
         #csv更新処理
         #現在の日時と日付の文字列変換
