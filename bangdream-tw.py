@@ -2,8 +2,8 @@ from cgitb import text
 from selenium import webdriver
 import time
 
-username = "Q6GUVp50d67dlx0"
-password = "5k8r5hdr"
+username = "(ID)"
+password = "(パスワード)"
 
 url = "https://twitter.com/i/flow/login"
 text = "テストテキストです"
