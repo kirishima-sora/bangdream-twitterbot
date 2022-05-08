@@ -101,8 +101,8 @@ for row in range(10-shift_num):
 #更新があれば自動ツイートとcsvリネーム処理を実行
 if (shift_num != 0) or (df_old_comv.equals(df_new_comv) == False):
     #twitterログイン情報
-    username = "Q6GUVp50d67dlx0"
-    password = "5k8r5hdr"
+    username = "(ID)"
+    password = "(パスワード)"
 
     #twitterのログインURL
     url = "https://twitter.com/i/flow/login"
