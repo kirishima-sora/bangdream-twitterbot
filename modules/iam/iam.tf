@@ -21,11 +21,18 @@ resource aws_iam_role lambda_role {
 data aws_iam_policy lambda_basic_execution {
     arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
+data aws_iam_policy s3_full_access {
+    arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
 
 #IAMロールへのIAMポリシーのアタッチ
 resource aws_iam_role_policy_attachment lambda_basic_execution {
     role = aws_iam_role.lambda_role.name
     policy_arn = data.aws_iam_policy.lambda_basic_execution.arn
+}
+resource aws_iam_role_policy_attachment s3_access {
+    role = aws_iam_role.lambda_role.name
+    policy_arn = data.aws_iam_policy.s3_full_access.arn
 }
 
 #他ロールで使用するためのアウトプット
@@ -34,5 +41,5 @@ output lambda_role_arn {
 }
 
 output lambda_policy {
-    value = aws_iam_role_policy_attachment.lambda_basic_execution
+    value = aws_iam_role_policy_attachment.s3_access
 }
