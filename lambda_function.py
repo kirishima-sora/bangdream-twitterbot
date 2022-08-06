@@ -56,7 +56,7 @@ def lambda_handler(event, context):
     tmp_path = "/tmp/data.csv"
 
     #CSV書き込み
-    with open(tmp_path, "w", encoding="Shift_JIS") as file:
+    with open(tmp_path, "w", encoding="cp932") as file:
         writer = csv.writer(file, lineterminator="\n")
         writer.writerows(event_list)
 
@@ -68,12 +68,12 @@ def lambda_handler(event, context):
 
     #s3バケットからcsv読み込み
     df_old_bucket = s3.Object(bucket_name, s3_filename_old)
-    body_in = df_old_bucket.get()['Body'].read().decode("Shift_JIS")
+    body_in = df_old_bucket.get()['Body'].read().decode("cp932")
     buffer_in = io.StringIO(body_in)
     df_old = pd.read_csv(buffer_in, lineterminator='\n')
     #newも同様
     df_new_bucket = s3.Object(bucket_name, s3_filename_new)
-    body_in = df_new_bucket.get()['Body'].read().decode("Shift_JIS")
+    body_in = df_new_bucket.get()['Body'].read().decode("cp932")
     buffer_in = io.StringIO(body_in)
     df_new = pd.read_csv(buffer_in, lineterminator='\n')
 
