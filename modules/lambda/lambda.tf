@@ -14,8 +14,9 @@ data archive_file function_source {
 #lambda作成
 resource aws_lambda_function function {
     function_name = local.function_name
-    handler = "lambda.lambda_handler"
+    handler = "lambda_function.lambda_handler"
     runtime = "python3.8"
+    timeout = 15
     filename = data.archive_file.function_source.output_path
     source_code_hash = data.archive_file.function_source.output_base64sha256
     role = var.role_arn
