@@ -8,6 +8,7 @@ provider aws {
     region = "ap-northeast-1"   
 }
 
+#IAM
 #信頼ポリシー(lambdaがこのロールを受け取れるようにする)
 data aws_iam_policy_document assume_role {
     statement {
@@ -37,59 +38,39 @@ resource aws_iam_role_policy_attachment lambda_basic_execution {
     policy_arn = data.aws_iam_policy.lambda_basic_execution.arn
 }
 
-# #awsプロバイダ情報
-# provider aws {
-#     region = "ap-northeast-1"
-# }
 
 
-# #定数定義
-# locals {
-#     function_name  = "terraform_bangdre_function"
-# }
+#lambda
+#定数定義
+locals {
+    function_name  = "terraform_bangdre_function"
+}
 
+#lambda実行ファイル定義
+data archive_file function_source {
+    type = "zip"
+    source_dir = "app"
+    output_path = "archive/lambda.zip"
+}
 
-# #KMSキー定義
-# resource aws_kms_key lambda_key {
-#     description  = "My Lambda Function Customer Master Key"
-#     enable_key_rotation = true
-#     deletion_window_in_days = 7
-# }
+#lambda作成
+resource aws_lambda_function function {
+    function_name = local.function_name
+    handler = "lambda.lambda_handler"
+    runtime = "python3.8"
+    filename = data.archive_file.function_source.output_path
+    source_code_hash = data.archive_file.function_source.output_base64sha256
+    role = aws_iam_role.lambda_role.arn
+    # environment {
+    #     variables = {
+    #         BASE_MESSAGE = "Hello"
+    #     }
+    # }
+    depends_on = [aws_iam_role_policy_attachment.lambda_basic_execution, aws_cloudwatch_log_group.lambda_log_group]
+}
 
-# resource aws_kms_alias lambda_key_alias {
-#     name = "alias/my-lambda-key"
-#     target_key_id = aws_kms_key.lambda_key.id
-# }
-
-
-# #lambda実行ファイル定義
-# data archive_file function_source {
-#     type = "zip"
-#     source_dir = "app"
-#     output_path = "archive/lambda.zip"
-# }
-
-
-# #lambda作成
-# resource aws_lambda_function function {
-#     function_name = local.function_name
-#     handler = "lambda.handler"
-#     runtime = "python3.8"
-#     filename = data.archive_file.function_source.output_puth
-#     source_code_hash = data.archive_file.function_source.output_base64sha256
-#     role = aws_iam_role.lambda_role.arn
-#     kms_key_arn = aws_kms_key.lambda_key.arn
-#     environment {
-#         variables = {
-#             BASE_MESSAGE = "Hello"
-#         }
-#     }
-#     depends_on = [aws_iam_role_policy_attachment.lambda_policy, aws_cloudwatch_log_group.lambda_log_group]
-# }
-
-
-# #CloudWatchLogsグループ定義
-# resource "aws_cloudwatch_log_group" "lambda_log_group" {
-#     name = "/aws/lambda/${local.function_name}"
-# }
+#CloudWatchLogsグループ定義
+resource aws_cloudwatch_log_group lambda_log_group {
+    name = "/aws/lambda/${local.function_name}"
+}
 
