@@ -1,0 +1,6 @@
+aws_access_key_id = ""
+aws_secret_access_key = ""
+twitter_access_token_key = ""
+twitter_access_token_key_secret = ""
+twitter_consumer_key = ""
+twitter_consumer_key_secret = ""
