@@ -1,6 +1,13 @@
-#awsプロバイダ情報
+#awsアクセスキー
 variable aws_access_key_id {}
 variable aws_secret_access_key {}
+#Lambda環境変数（twitterAPIアクセスキー・タイムゾーン）
+variable twitter_access_token_key {}
+variable twitter_access_token_key_secret {}
+variable twitter_consumer_key {}
+variable twitter_consumer_key_secret {}
+
+#awsプロバイダ情報
 provider aws {
     access_key = var.aws_access_key_id
     secret_key = var.aws_secret_access_key
@@ -15,6 +22,10 @@ module lambda {
     source = "./modules/lambda"
     role_arn = module.iam.lambda_role_arn
     policy = module.iam.lambda_policy
+    twi_access_token_key = var.twitter_access_token_key
+    twi_access_token_key_secret = var.twitter_access_token_key_secret
+    twi_consumer_key = var.twitter_consumer_key
+    twi_consumer_key_secret = var.twitter_consumer_key_secret
 }
 
 

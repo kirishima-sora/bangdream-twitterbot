@@ -21,6 +21,15 @@ resource aws_lambda_function function {
     source_code_hash = data.archive_file.function_source.output_base64sha256
     role = var.role_arn
     depends_on = [var.policy, aws_cloudwatch_log_group.lambda_log_group]
+    environment {
+        variables = {
+            ACCESS_TOKEN_KEY = "${var.twi_access_token_key}"
+            ACCESS_TOKEN_KEY_SECRET = "${var.twi_access_token_key_secret}"
+            CONSUMER_KEY = "${var.twi_consumer_key}"
+            CONSUMER_KEY_SECRET = "${var.twi_consumer_key_secret}"
+            TZ = "Asia/Tokyo"
+        }
+    }
 }
 
 #CloudWatchLogsグループ定義
