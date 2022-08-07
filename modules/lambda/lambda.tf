@@ -1,4 +1,4 @@
-#lambda
+#Lambda
 #定数定義
 locals {
     function_name  = "terraform_bangdre_function"
@@ -37,10 +37,10 @@ resource aws_cloudwatch_log_group lambda_log_group {
     name = "/aws/lambda/${local.function_name}"
 }
 
+#EventBridgeで使用する値のアウトプット
 output arn {
     value = aws_lambda_function.function.arn
 }
-
 output function_name {
     value = aws_lambda_function.function.function_name
 }

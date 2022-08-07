@@ -35,11 +35,10 @@ resource aws_iam_role_policy_attachment s3_access {
     policy_arn = data.aws_iam_policy.s3_full_access.arn
 }
 
-#他ロールで使用するためのアウトプット
+#Lambdaで使用する値のアウトプット
 output lambda_role_arn {
     value = aws_iam_role.lambda_role.arn
 }
-
 output lambda_policy {
     value = aws_iam_role_policy_attachment.s3_access
 }
