@@ -36,3 +36,11 @@ resource aws_lambda_function function {
 resource aws_cloudwatch_log_group lambda_log_group {
     name = "/aws/lambda/${local.function_name}"
 }
+
+output arn {
+    value = aws_lambda_function.function.arn
+}
+
+output function_name {
+    value = aws_lambda_function.function.function_name
+}
