@@ -24,11 +24,11 @@ WindowsでのLinux+Terraformの環境構築について、冒頭のブログを�
 git clone https://github.com/kirishima-sora/bangdream-twitterbot
 ```
 
-1. terraform.tfvarsに必要情報の記載
+2. terraform.tfvarsに必要情報の記載
 AWSアクセスキー等  
 twitterAPIアクセスキー等
 
-1. ツール実行
+3. ツール実行
 ```bash
 sh get_library.sh
 terraform init
