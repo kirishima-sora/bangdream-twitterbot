@@ -6,7 +6,7 @@ Terraform環境構築：https://soramania.com/wsl2-linux-terraform/
 Terraformコード：（作成中）  
 
 # デモ（実際のツイート例）
-（ツイート例の画像はgithubに挙げて貼る予定）
+![Alt text](/demo.png)
 
 # 使用技術
 ツール：Python  
@@ -15,28 +15,28 @@ Terraformコード：（作成中）
 # 使い方
 前提として、Linux環境にてTerraformの実行環境が準備できていることとします  
 WindowsでのLinux+Terraformの環境構築について、冒頭のブログをご参考ください  
-また、コード実行にあたってはAWSアクセスキー・TwitterAPIのアクセスキー・コンシューマーキーが必要になります  
+また、コード実行にあたってはAWSとTwitterAPIのアクセスキー等が必要になります  
 ※実行する場合は、アクセス先のサーバへ負荷がかからないよう、複数回連続しての実行はお控えください  
 　ツール実行は自己責任でお願いいたします  
 
 1. クローン作成
-```bash
+```
 git clone https://github.com/kirishima-sora/bangdream-twitterbot
 ```
 
-2. terraform.tfvarsに必要情報の記載
-AWSアクセスキー等  
-twitterAPIアクセスキー等
+2. terraform.tfvarsに必要情報の記載  
+* AWSアクセスキー等  
+* twitterAPIアクセスキー等
 
 3. ツール実行
-```bash
+```
 sh get_library.sh
 terraform init
 terraform apply
 ```
 
 # 注意事項
-使い方にも記載しましたが、スクレイピングするため、アクセス先のサーバへ負荷がかからないよう、複数回連続しての実行はお控えください  
+使い方にも記載しましたが、スクレイピングするためアクセス先のサーバへ負荷がかからないよう、複数回連続しての実行はお控えください  
 ツール実行は自己責任でお願いいたします  
 
 # バージョン情報
