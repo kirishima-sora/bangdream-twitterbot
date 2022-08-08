@@ -22,6 +22,7 @@ def lambda_handler(event, context):
 
     #スクレイピング
     elems = soup.find_all('ul', attrs={"class": "liveEventList"})
+    #イベントごとにliで区切られているため、li箇所の抜き出し
     events = elems[0].find_all("li")
 
     #イベント一覧リストの定義
@@ -34,8 +35,10 @@ def lambda_handler(event, context):
         short_url_sc = event_unit[1].find('a').get("href")
         long_url_sc = urllib.parse.urljoin(url_sc, short_url_sc)
         columns = event_unit[1].find_all('div', attrs={"class": "itemInfoColumnTitle"})
+        #情報分類の抽出（開催日時・場所・概要）
         datas = event_unit[1].find_all('div', attrs={"class": "itemInfoColumnData"})
         date = place = overview = info = "None"
+        #情報分類を元にライブ情報の抽出
         for i, column in enumerate(columns):
             if column.get_text() == "開催日時":
                 date = datas[i].get_text()
@@ -85,11 +88,14 @@ def lambda_handler(event, context):
     df_comp = (df_old_comv==df_new_comv)
 
     #新情報の番号抽出・新情報の抜出後の比較リスト作成（true,false判定）
+    #新情報が何番目の行かをリスト化
     new_num_list = []
     shift_num = 0
     for row in range(10):
         row = row - len(new_num_list)
+        #タイトル・URL・日付が全て異なっている場合は新情報とみなす
         if ((df_comp.iat[row,0]==False) and (df_comp.iat[row,1]==False) and (df_comp.iat[row,2]==False)):
+            #新情報の行番号をリストに保存
             new_num_list.append(row + len(new_num_list))
             df_new_comv = df_new_comv.drop(df_new_comv.index[row])
             df_old_comv = df_old_comv.drop(df_old_comv.index[-1])
@@ -166,6 +172,5 @@ def lambda_handler(event, context):
     #更新がなければ自動ツイートとcsvリネームは省略する(スクレイピングで作成したファイルは削除する)
     else:
         s3.Object(bucket_name, s3_filename_new).delete()
-
 
 
