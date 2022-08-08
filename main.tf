@@ -1,7 +1,7 @@
 #awsアクセスキー
 variable aws_access_key_id {}
 variable aws_secret_access_key {}
-#Lambda環境変数（twitterAPIアクセスキー・タイムゾーン）
+#Lambda環境変数（twitterAPIキー）
 variable twitter_access_token_key {}
 variable twitter_access_token_key_secret {}
 variable twitter_consumer_key {}
