@@ -5,6 +5,9 @@ Pythonコード・インフラ(AWS)構成：https://soramania.com/python-aws-liv
 Terraform環境構築：https://soramania.com/wsl2-linux-terraform/  
 Terraformコード：（作成中）  
 
+# ツール全体構成
+![Alt text](/overall_structure.png)
+
 # デモ（実際のツイート例）
 ![Alt text](/demo.png)
 
