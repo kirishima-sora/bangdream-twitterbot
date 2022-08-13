@@ -19,6 +19,7 @@ Terraformコード：https://soramania.com/aws-terraform/
 手順や前提条件が多いため、あくまで自分用のメモです  
 前提条件
 * Linux環境にてTerraformの実行環境が準備できていること
+
 WindowsでのLinux+Terraformの環境構築について、冒頭のブログをご参考ください  
 また、コード実行にあたってはAWSとTwitterAPIのアクセスキー等が必要になります  
 ※実行する場合は、アクセス先のサーバへ負荷がかからないよう、複数回連続しての実行はお控えください  
