@@ -25,29 +25,24 @@ WindowsでのLinux+Terraformの環境構築について、冒頭のブログを�
 ※実行する場合は、アクセス先のサーバへ負荷がかからないよう、複数回連続しての実行はお控えください  
 　ツール実行は自己責任でお願いいたします  
 
-
-1. クローン作成
+## 1.クローン作成
 ```
 git clone https://github.com/kirishima-sora/bangdream-twitterbot
 ```
 
-
-2. terraform.tfvarsに必要情報の記載  
+## 2.terraform.tfvarsに必要情報の記載  
 * AWSアクセスキー等  
 * twitterAPIアクセスキー等
 
-
-3. S3バケットの作成、ファイル配置  
+## 3.S3バケットの作成、ファイル配置  
 * バケットを作成  
 * 作成したバケット配下にtest_csvフォルダにあるbandre-event-old.csvを配置  
 * 作成したバケット配下にoldlist-csvフォルダを作成
 
-
-4. app/lambda_function.pyの編集  
+## 4.app/lambda_function.pyの編集  
 * 変数bucket_nameを作成したバケット名に変更
 
-
-5. ツール実行
+## 5.ツール実行
 ```
 sh get_library.sh
 terraform init
