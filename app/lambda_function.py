@@ -52,32 +52,15 @@ def lambda_handler(event, context):
     s3 = boto3.resource('s3')
     bucket_name = "bangdream-eventlist"
     bucket = s3.Bucket(bucket_name)
-    s3_filename_new = 'bandre-event.csv'
     s3_filename_old = 'bandre-event-old.csv'
-
-    #lambda実行時の一時ファイルパス
-    tmp_path = "/tmp/data.csv"
-
-    #CSV書き込み
-    with open(tmp_path, "w", encoding="cp932") as file:
-        writer = csv.writer(file, lineterminator="\n")
-        writer.writerows(event_list)
-
-    #S3バケットへのファイルアップロード
-    bucket.upload_file(tmp_path, s3_filename_new)
-
-    #tmpファイルの削除
-    os.remove(tmp_path)
 
     #s3バケットからcsv読み込み
     df_old_bucket = s3.Object(bucket_name, s3_filename_old)
     body_in = df_old_bucket.get()['Body'].read().decode("cp932")
     buffer_in = io.StringIO(body_in)
     df_old = pd.read_csv(buffer_in, lineterminator='\n')
+
     #newも同様
-    df_new_bucket = s3.Object(bucket_name, s3_filename_new)
-    body_in = df_new_bucket.get()['Body'].read().decode("cp932")
-    buffer_in = io.StringIO(body_in)
     df_new = pd.read_csv(buffer_in, lineterminator='\n')
 
     #新情報を抜き出すリストの定義
@@ -165,12 +148,15 @@ def lambda_handler(event, context):
         s3.Object(bucket_name, old_copy_to).copy_from(CopySource={'Bucket': bucket_name, 'Key': s3_filename_old})
         s3.Object(bucket_name, s3_filename_old).delete()
 
-        #最新ファイルを1つ前の古いファイルに移動
-        s3.Object(bucket_name, s3_filename_old).copy_from(CopySource={'Bucket': bucket_name, 'Key': s3_filename_new})
-        s3.Object(bucket_name, s3_filename_new).delete()
-
-    #更新がなければ自動ツイートとcsvリネームは省略する(スクレイピングで作成したファイルは削除する)
-    else:
-        s3.Object(bucket_name, s3_filename_new).delete()
+        #一時利用ファイルパス
+        tmp_path = "/tmp/data.csv"
+        #CSV書き込み
+        with open(tmp_path, "w", encoding="cp932") as file:
+            writer = csv.writer(file, lineterminator="\n")
+            writer.writerows(event_list)
+        #新しいファイルを次回比較用に古いファイルとしてS3バケットへのファイルアップロード
+        bucket.upload_file(tmp_path, s3_filename_old)
+        #tmpファイルの削除
+        os.remove(tmp_path)
 
 
