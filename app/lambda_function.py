@@ -61,7 +61,7 @@ def lambda_handler(event, context):
     df_old = pd.read_csv(buffer_in, lineterminator='\n')
 
     #newも同様
-    df_new = pd.read_csv(buffer_in, lineterminator='\n')
+    df_new = pd.DataFrame(event_list[1:], columns=event_list[0])
 
     #新情報を抜き出すリストの定義
     df_old_comv = df_old.copy()
