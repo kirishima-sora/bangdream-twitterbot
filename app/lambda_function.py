@@ -48,7 +48,7 @@ def lambda_handler(event, context):
 
     #S3バケット処理の準備
     s3 = boto3.resource('s3')
-    bucket_name = "bangdream-eventlist"
+    bucket_name = "bangdream-eventlist-terraform"
     s3_filename_old = "bandre-event-old.csv"
 
     #S3バケット内の最新のCSVを読み込み
