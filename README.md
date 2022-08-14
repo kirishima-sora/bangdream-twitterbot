@@ -16,7 +16,6 @@ Terraformコード：https://soramania.com/aws-terraform/
 インフラ：AWS・Terraform
 
 # 使い方
-手順や前提条件が多いため、あくまで自分用のメモです  
 前提条件
 * Linux環境にてTerraformの実行環境が準備できていること
 
@@ -34,15 +33,7 @@ git clone https://github.com/kirishima-sora/bangdream-twitterbot
 * AWSアクセスキー等  
 * twitterAPIアクセスキー等
 
-## 3.S3バケットの作成、ファイル配置  
-* バケットを作成  
-* 作成したバケット配下にtest_csvフォルダにあるbandre-event-old.csvを配置  
-* 作成したバケット配下にoldlist-csvフォルダを作成
-
-## 4.app/lambda_function.pyの編集  
-* 変数bucket_nameを作成したバケット名に変更
-
-## 5.ツール実行
+## 3.ツール実行
 ```
 sh get_library.sh
 terraform init
