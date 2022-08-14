@@ -18,6 +18,8 @@ Terraformコード：https://soramania.com/aws-terraform/
 # 使い方
 前提条件
 * Linux環境にてTerraformの実行環境が準備できていること
+* ツール全体構成に記載の構成を実現するための権限が付与されているAWSアクセスキーが準備できていること
+* アクセスレベルがElevatedのTwitterAPIキーが準備できていること
 
 WindowsでのLinux+Terraformの環境構築について、冒頭のブログをご参考ください  
 また、コード実行にあたってはAWSとTwitterAPIのアクセスキー等が必要になります  
