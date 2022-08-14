@@ -1,9 +1,9 @@
 # バンドリのライブ更新情報の自動ツイートボット
 バンドリのHPからライブ情報を1日2回スクレイピングして、更新情報があれば自動でツイートするツール  
 実装の詳細については、ブログの以下記事をご覧ください  
-Pythonコード・インフラ(AWS)構成：https://soramania.com/python-aws-livebot/  
-Terraform環境構築：https://soramania.com/wsl2-linux-terraform/  
-Terraformコード：https://soramania.com/aws-terraform/ 
+Pythonコード解説・インフラ(AWS)のGUIでの構築：https://soramania.com/python-aws-livebot/  
+Terraformの実行環境構築：https://soramania.com/wsl2-linux-terraform/  
+Terraformコード解説：https://soramania.com/aws-terraform/ 
 
 # ツール全体構成
 ![Alt text](/overall_structure.png)
