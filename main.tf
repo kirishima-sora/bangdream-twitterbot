@@ -7,11 +7,20 @@ variable twitter_access_token_key_secret {}
 variable twitter_consumer_key {}
 variable twitter_consumer_key_secret {}
 
-#awsプロバイダ情報
+#Terraformバージョン
+terraform {
+    required_version = "~> 0.12.5"
+}
+
+#プロバイダ情報
 provider aws {
+    version = "3.37.0"
     access_key = var.aws_access_key_id
     secret_key = var.aws_secret_access_key
     region = "ap-northeast-1"   
+}
+provider archive {
+    version = "2.1.0"
 }
 
 #IAM
