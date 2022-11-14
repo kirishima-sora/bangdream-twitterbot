@@ -146,7 +146,7 @@ def lambda_handler(event, context):
         #一時利用ファイルパス
         tmp_path = "/tmp/data.csv"
         #CSV書き込み
-        with open(tmp_path, "w", encoding="cp932") as file:
+        with open(tmp_path, "w", encoding="cp932", errors='ignore') as file:
             writer = csv.writer(file, lineterminator="\n")
             writer.writerows(event_list)
         bucket = s3.Bucket(bucket_name)
