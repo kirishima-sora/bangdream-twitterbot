@@ -29,7 +29,8 @@ def lambda_handler(event, context):
 
     #イベント一覧リストの作成
     for event_unit in enumerate(events):
-        title = event_unit[1].find('p', attrs={"class": "liveEventListTitle"}).text
+        title_source = event_unit[1].find('p', attrs={"class": "liveEventListTitle"}).text
+        title = title_source.encode("cp932","ignore").decode("cp932", "ignore")
         short_url = event_unit[1].find('a').get("href")
         long_url = urllib.parse.urljoin(url_sc, short_url)
         columns = event_unit[1].find_all('div', attrs={"class": "itemInfoColumnTitle"})
